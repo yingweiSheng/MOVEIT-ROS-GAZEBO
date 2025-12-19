@@ -1,0 +1,23 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: gazebo_robot_test
+    relative_path: urdf/test.urdf
+  srdf:
+    relative_path: config/six_arm.srdf
+  package_settings:
+    author_name: syw
+    author_email: syw@syw.com
+    generated_timestamp: 1765786571
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position

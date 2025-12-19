@@ -1,0 +1,23 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: er7robot_arm_description
+    relative_path: urdf/er7_two_arm_main.urdf.xacro
+  srdf:
+    relative_path: config/er7robot.srdf
+  package_settings:
+    author_name: syw
+    author_email: syw@qq.com
+    generated_timestamp: 1764750695
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position

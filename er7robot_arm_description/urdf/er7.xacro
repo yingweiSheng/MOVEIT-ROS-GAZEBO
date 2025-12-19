@@ -1,0 +1,302 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+    <!-- 材料定义 -->
+  <material name="white">
+    <color rgba="0.9 0.9 0.9 1.0"/>
+  </material>
+  <material name="tool">
+    <color rgba="0.8 0.8 0.88 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+  <xacro:macro name="estun_robot" params=" prefix parent_link attach_xyz attach_rpy">
+
+    <!-- ================== 可配置参数 ================== -->
+
+    
+    <!-- ================== 宏定义 ================== -->
+
+
+
+
+    <!-- 全局参数 -->
+
+    <xacro:property name="pkg" value="er7robot_arm_description" />
+    <xacro:property name="mesh_dir" value="package://er7robot_arm_description/meshes"/>
+    
+    <!-- 关节参数 -->
+
+    <xacro:property name="max_effort" value="87"/>
+    <xacro:property name="max_velocity" value="2.1750"/>
+    <!-- 连杆模板 -->
+    <xacro:macro name="er7_link" params="name mesh material *origin *inertial">
+      <link name="${prefix}${name}">
+        <xacro:insert_block name="inertial"/>
+        <visual>
+          <xacro:insert_block name="origin"/>
+          <geometry>
+            <mesh filename="${mesh_dir}/${mesh}.stl"/>
+          </geometry>
+          <material name="${material}"/>
+        </visual>
+        <collision>
+          <xacro:insert_block name="origin"/>
+          <geometry>
+            <mesh filename="${mesh_dir}/${mesh}.stl"/>
+          </geometry>
+        </collision>
+      </link>
+    </xacro:macro>
+
+    <!-- 旋转关节模板 -->
+    <xacro:macro name="revolute_joint" params="name parent child xyz rpy axis lower upper">
+      <joint name="${prefix}${name}" type="revolute">
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <parent link="${prefix}${parent}"/>
+        <child link="${prefix}${child}"/>
+        <axis xyz="${axis}"/>
+        <limit effort="${max_effort}" 
+              lower="${lower}" 
+              upper="${upper}" 
+              velocity="${max_velocity}"/>
+      </joint>
+    </xacro:macro>
+
+    <!-- 固定关节模板 -->
+    <xacro:macro name="fixed_joint" params="name parent child xyz rpy">
+      <joint name="${prefix}${name}" type="fixed">
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        <parent link="${parent}"/>
+        <child link="${prefix}${child}"/>
+      </joint>
+    </xacro:macro>
+
+    <!-- ================== 机器人结构 ================== -->
+    <!-- 连接到父链接的关节 -->
+    <xacro:fixed_joint name="base_joint"
+                      parent="${parent_link}"
+                      child="base_link"
+                      xyz="${attach_xyz}"
+                      rpy="${attach_rpy}"/>
+
+    <!-- Base Link -->
+    <xacro:er7_link name="base_link" mesh="base_link" material="grey">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+        <origin xyz="-0.026793 -9.7595E-05 0.10245" rpy="0 0 0"/>
+        <mass value="10.535"/>
+        <inertia ixx="0.070003" ixy="1.3701E-05" ixz="-0.00096429"
+                iyy="0.095771" iyz="5.4877E-06" izz="0.088893"/>
+      </inertial>
+    </xacro:er7_link>
+
+    <!-- 关节1 -->
+    <xacro:er7_link name="link_1" mesh="link_1" material="white">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+        <origin xyz="0.011138 0.010138 0.29517" rpy="0 0 0"/>
+        <mass value="4.2086"/>
+        <inertia ixx="0.030054" ixy="-0.00068137" ixz="-0.0043902"
+                iyy="0.032613" iyz="-0.0021869" izz="0.021837"/>
+      </inertial>
+    </xacro:er7_link>
+
+    <xacro:revolute_joint name="joint_1"
+                        parent="base_link"
+                        child="link_1"
+                        xyz="0 0 0"
+                        rpy="0 0 0"
+                        axis="0 0 -1"
+                        lower="-2.96706" 
+                        upper="2.96706"/>
+
+    <!-- 关节2 -->
+    <xacro:er7_link name="link_2" mesh="link_2" material="white">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+        <origin xyz="0.143 -0.012788 0.0012609" rpy="0 0 0"/>
+        <mass value="4.7189"/>
+        <inertia ixx="0.013281" ixy="0.0027249" ixz="-0.002609"
+                iyy="0.087452" iyz="3.0723E-05" izz="0.088272"/>
+      </inertial>
+    </xacro:er7_link>
+
+    <xacro:revolute_joint name="joint_2"
+                        parent="link_1"
+                        child="link_2"
+                        xyz="0.04 0 0.386"
+                        rpy="-1.5685 -1.5708 0"
+                        axis="0 0 1"
+                        lower="-1.39626" 
+                        upper="2.35619"/>
+
+    <!-- 关节3 -->
+    <xacro:er7_link name="link_3" mesh="link_3" material="white">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+        <origin xyz="0.018787 -0.024183 -0.005861" rpy="0 0 0"/>
+        <mass value="1.2995"/>
+        <inertia ixx="0.0046013" ixy="0.00046754" ixz="-0.0001967"
+                iyy="0.0041193" iyz="0.00021785" izz="0.0053624"/>
+      </inertial>
+    </xacro:er7_link>
+
+    <xacro:revolute_joint name="joint_3"
+                        parent="link_2"
+                        child="link_3"
+                        xyz="0.42995 -0.0065869 -1.5401E-05"
+                        rpy="0 0 1.5708"
+                        axis="0 0 1"
+                        lower="-3.31613" 
+                        upper="1.13446"/>
+
+    <!-- 关节4 -->
+    <xacro:er7_link name="link_4" mesh="link_4" material="white">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+        <origin xyz="0.00030569 2.6731E-05 0.15173" rpy="0 0 0"/>
+        <mass value="3.6259"/>
+        <inertia ixx="0.013688" ixy="-2.77E-07" ixz="-0.00013787"
+                iyy="0.013904" iyz="-5.1113E-06" izz="0.006922"/>
+      </inertial>
+    </xacro:er7_link>
+
+    <xacro:revolute_joint name="joint_4"
+                        parent="link_3"
+                        child="link_4"
+                        xyz="0.094433 -0.041321 -7.8123E-05"
+                        rpy="-1.5708 -1.5708 -1.5847"
+                        axis="0 0 -1"
+                        lower="-3.31613" 
+                        upper="3.31613"/>
+
+    <!-- 关节5 -->
+    <xacro:er7_link name="link_5" mesh="link_5" material="white">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+        <origin xyz="0.022976 -0.00016218 -0.0068804" rpy="0 0 0"/>
+        <mass value="0.49222"/>
+        <inertia ixx="0.00055117" ixy="1.7465E-06" ixz="-4.3677E-05"
+                iyy="0.00056711" iyz="4.2405E-07" izz="0.00051329"/>
+      </inertial>
+    </xacro:er7_link>
+
+    <xacro:revolute_joint name="joint_5"
+                        parent="link_4"
+                        child="link_5"
+                        xyz="0.0011172 0 0.35"
+                        rpy="-1.5708 -1.5522 -1.5679"
+                        axis="-8.7448E-05 0 1"
+                        lower="-2.09440" 
+                        upper="2.09440"/>
+
+    <!-- 关节6 -->
+    <xacro:er7_link name="link_6" mesh="link_6" material="tool">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertial>
+        <origin xyz="5.908E-06 -5.9257E-05 -0.01015" rpy="0 0 0"/>
+        <mass value="0.039799"/>
+        <inertia ixx="1.3325E-05" ixy="-2.2942E-10" ixz="8.8798E-10"
+                iyy="1.3251E-05" iyz="-2.1481E-09" izz="2.5479E-05"/>
+      </inertial>
+    </xacro:er7_link>
+
+    <xacro:revolute_joint name="joint_6"
+                        parent="link_5"
+                        child="link_6"
+                        xyz="0.085996 0 -0.0011172"
+                        rpy="1.5708 0.0 1.5708"
+                        axis="0 0 -1"
+                        lower="-6.28319" 
+                        upper="6.28319"/>
+    <!-- ================== 控制接口 ================== -->
+    <ros2_control name="${prefix}er7_ros2_control" type="system">
+      <hardware>
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      </hardware>
+      
+      <joint name="${prefix}joint_1">
+        <command_interface name="position">
+          <param name="min">-2.96706</param>
+          <param name="max">2.96706</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-2.1750</param>
+          <param name="max">2.1750</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="${prefix}joint_2">
+        <command_interface name="position">
+          <param name="min">-1.39626</param>
+          <param name="max">2.35619</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-2.1750</param>
+          <param name="max">2.1750</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint_3">
+        <command_interface name="position">
+          <param name="min">-3.31613</param>
+          <param name="max">1.13446</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-2.1750</param>
+          <param name="max">2.1750</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint_4">
+        <command_interface name="position">
+          <param name="min">-3.31613</param>
+          <param name="max">3.31613</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-2.1750</param>
+          <param name="max">2.1750</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint_5">
+        <command_interface name="position">
+          <param name="min">-2.09440</param>
+          <param name="max">2.09440</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-2.1750</param>
+          <param name="max">2.1750</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint_6">
+        <command_interface name="position">
+          <param name="min">-6.28319</param>
+          <param name="max">6.28319</param>
+        </command_interface>
+        <command_interface name="velocity">
+          <param name="min">-2.1750</param>
+          <param name="max">2.1750</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </ros2_control>
+  
+  </xacro:macro>
+</robot>

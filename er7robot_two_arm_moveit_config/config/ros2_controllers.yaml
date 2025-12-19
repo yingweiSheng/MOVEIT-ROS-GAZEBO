@@ -1,0 +1,44 @@
+# This config file is used by ros2_control
+controller_manager:
+  ros__parameters:
+    update_rate: 1000 # Hz
+
+    camera_arm_group_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    laser_arm_group_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+camera_arm_group_controller:
+  ros__parameters:
+    joints:
+      - camera_joint_1
+      - camera_joint_2
+      - camera_joint_3
+      - camera_joint_4
+      - camera_joint_5
+      - camera_joint_6
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    allow_nonzero_velocity_at_trajectory_end: true
+laser_arm_group_controller:
+  ros__parameters:
+    joints:
+      - laser_joint_1
+      - laser_joint_2
+      - laser_joint_3
+      - laser_joint_4
+      - laser_joint_5
+      - laser_joint_6
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    allow_nonzero_velocity_at_trajectory_end: true
