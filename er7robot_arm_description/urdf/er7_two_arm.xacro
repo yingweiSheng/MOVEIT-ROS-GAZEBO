@@ -5,12 +5,13 @@
     <xacro:estun_robot prefix="camera_" parent_link="base_link" attach_xyz="-1.0 0 0" attach_rpy="0 0 -1.57"/>
     <xacro:estun_robot prefix="laser_" parent_link="base_link" attach_xyz="1.0 0 0" attach_rpy="0 0 -1.57"/>
     <link name="base_link"/>
-    <gazebo>
-        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+    <!-- <gazebo>
+        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control"> -->
             <!--launch controller manager to manage joint_state_boardcaster and my_arm_group_controller-->
-            <parameters>$(find er7robot_two_arm_moveit_config)/config/ros2_controllers.yaml</parameters> 
+            <!-- <parameters>$(find er7robot_two_arm_moveit_config)/config/ros2_controllers.yaml</parameters>  -->
             <!--declare where to get robot_description-->
-            <robot_param_node>robot_state_publisher</robot_param_node>
+            <!-- <robot_param_node>robot_state_publisher</robot_param_node>
         </plugin>
-    </gazebo>
+    </gazebo> -->
+    
 </robot>

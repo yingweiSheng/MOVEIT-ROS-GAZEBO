@@ -13,14 +13,6 @@
   </material>
   <xacro:macro name="estun_robot" params=" prefix parent_link attach_xyz attach_rpy">
 
-    <!-- ================== 可配置参数 ================== -->
-
-    
-    <!-- ================== 宏定义 ================== -->
-
-
-
-
     <!-- 全局参数 -->
 
     <xacro:property name="pkg" value="er7robot_arm_description" />
@@ -212,7 +204,7 @@
                         lower="-6.28319" 
                         upper="6.28319"/>
     <!-- ================== 控制接口 ================== -->
-    <ros2_control name="${prefix}er7_ros2_control" type="system">
+    <!-- <ros2_control name="${prefix}er7_ros2_control" type="system">
       <hardware>
         <plugin>gazebo_ros2_control/GazeboSystem</plugin>
       </hardware>
@@ -296,7 +288,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-    </ros2_control>
+    </ros2_control> -->
   
   </xacro:macro>
 </robot>
