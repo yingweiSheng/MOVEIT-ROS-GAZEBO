@@ -7,7 +7,7 @@ use_gazebo: false # Whether the robot is started in a Gazebo simulation environm
 command_in_type: "speed_units" # "unitless"> in the range [-1:1], as if from joystick. "speed_units"> cmds are in m/s and rad/s
 scale:
   # Scale parameters are only used if command_in_type=="unitless"
-  linear:  0.4  # Max linear velocity. Unit is [m/s]. Only used for Cartesian commands.
+  linear:  3.0  # Max linear velocity. Unit is [m/s]. Only used for Cartesian commands.
   rotational:  0.8 # Max angular velocity. Unit is [rad/s]. Only used for Cartesian commands.
   # Max joint angular/linear velocity. Only used for joint commands on joint_command_in_topic.
   joint: 0.5
@@ -17,13 +17,22 @@ scale:
 
 ## Properties of outgoing commands
 publish_period: 0.02  # 1/Nominal publish rate [seconds]
-low_latency_mode: false  # Set this to true to publish as soon as an incoming Twist command is received (publish_period is ignored)
+low_latency_mode: true  # Set this to true to publish as soon as an incoming Twist command is received (publish_period is ignored)
 
 # What type of topic does your robot driver expect?
 # Currently supported are std_msgs/Float64MultiArray or trajectory_msgs/JointTrajectory
 command_out_type: trajectory_msgs/JointTrajectory
 
 # What to publish? Can save some bandwidth as most robots only require positions or velocities
+# In ros2_controllers.yaml,the controllers have     
+    # command_interfaces:
+    #   - position
+    #   - velocity
+    # state_interfaces:
+    #   - position
+    #   - velocity
+# So positions and velocityies should be both set to true, otherwise ,for topic robot_arm_controller/JointTrajectory
+# the command send from servo_node will lost [joint_positions] and be set to None, this will cause missmatch with controllers 
 publish_joint_positions: true
 publish_joint_velocities: true
 publish_joint_accelerations: false
@@ -43,7 +52,7 @@ planning_frame: base_link  # The MoveIt planning frame. Often 'base_link' or 'wo
 
 ## Other frames
 ee_frame_name: camera_link_6  # The name of the end effector link, used to return the EE pose
-robot_link_command_frame:  base_link  # commands must be given in the frame of a robot link. Usually either the base or end effector
+robot_link_command_frame:  camera_link_6  # commands must be given in the frame of a robot link. Usually either the base or end effector
 
 ## Stopping behaviour
 incoming_command_timeout: 5.0  # Stop servoing if X seconds elapse without a new command

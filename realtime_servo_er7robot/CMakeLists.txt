@@ -15,6 +15,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(moveit_ros_move_group REQUIRED)
+find_package(tf2_eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 add_executable(laser_servo_demo 
   src/laser_servo_demo.cpp
@@ -55,6 +57,8 @@ ament_target_dependencies(dual_arm_servo_commander
   moveit_core
   moveit_ros_planning_interface
   moveit_ros_move_group
+  tf2_eigen
+  Eigen3
 )
 install(
   TARGETS
