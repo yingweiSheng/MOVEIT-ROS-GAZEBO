@@ -85,6 +85,12 @@ def generate_launch_description():
                 executable="dual_arm_servo_commander",
                 namespace="dual_commander_node",
                 output="screen",
+                parameters=
+                [
+                moveit_config.robot_description,
+                moveit_config.robot_description_semantic,
+                moveit_config.robot_description_kinematics,
+                ],
             )
         ]
     )

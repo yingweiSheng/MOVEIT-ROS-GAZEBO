@@ -14,6 +14,7 @@ find_package(control_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_ros_planning REQUIRED)
 find_package(moveit_ros_move_group REQUIRED)
 find_package(tf2_eigen REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -56,6 +57,7 @@ ament_target_dependencies(dual_arm_servo_commander
   moveit_servo
   moveit_core
   moveit_ros_planning_interface
+  moveit_ros_planning
   moveit_ros_move_group
   tf2_eigen
   Eigen3
