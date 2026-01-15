@@ -3,6 +3,8 @@
 ###############################################
 use_gazebo: false # Whether the robot is started in a Gazebo simulation environment
 
+# servo会对显式输入的命令进行缩放，使得机械臂实际的速度较小，采用实际主臂速度生成从臂速度虽然同步性较好，但是需要额外对从臂速度进行放大
+
 ## Properties of incoming commands
 command_in_type: "speed_units" # "unitless"> in the range [-1:1], as if from joystick. "speed_units"> cmds are in m/s and rad/s
 scale:

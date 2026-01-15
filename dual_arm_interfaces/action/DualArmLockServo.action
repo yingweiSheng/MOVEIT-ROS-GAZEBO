@@ -1,0 +1,12 @@
+# Part 1: Goal 
+float64[6] master_velocity  # [vx, vy, vz, wx, wy, wz]
+float64 execute_time        # 运行时间 (秒)
+float64 frequency           # 控制频率 (Hz)
+---
+# Part 2: Result 
+bool success
+float64[7] master_final_pose       # [x, y, z, qx, qy, qz, qw]
+float64[7] slave_final_pose
+---
+# Part 3: Feedback 当前已经运行了多久
+float64 time_elapsed

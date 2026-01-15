@@ -77,12 +77,12 @@ def generate_launch_description():
         ]
     )
     # Need to set delay
-    dual_commander_node = TimerAction(
+    dual_server_node = TimerAction(
         period=8.0,
         actions=[
             Node(
                 package="realtime_servo_er7robot",
-                executable="dual_arm_servo_commander",
+                executable="dual_arm_servo_server",
                 namespace="dual_commander_node",
                 output="screen",
                 parameters=
@@ -161,6 +161,6 @@ def generate_launch_description():
 
 
     return LaunchDescription(
-        [rviz_node, static_tf, camera_servo_node,laser_servo_node,dual_commander_node,
+        [rviz_node, static_tf, camera_servo_node,laser_servo_node,dual_server_node,
          ros2_control_node,robot_state_publisher,controller_start]
     )

@@ -18,6 +18,12 @@ find_package(moveit_ros_planning REQUIRED)
 find_package(moveit_ros_move_group REQUIRED)
 find_package(tf2_eigen REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(eigen3_cmake_module REQUIRED)
+find_package(dual_arm_interfaces REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_executable(laser_servo_demo 
   src/laser_servo_demo.cpp
@@ -46,11 +52,12 @@ ament_target_dependencies(camera_servo_demo
   moveit_ros_move_group
 )
 
-add_executable(dual_arm_servo_commander 
-  src/dual_arm_servo_commander.cpp
+add_executable(dual_arm_servo_server 
+  src/dual_arm_servo_server.cpp
 )
-ament_target_dependencies(dual_arm_servo_commander 
+ament_target_dependencies(dual_arm_servo_server 
   rclcpp
+  rclcpp_action
   control_msgs
   geometry_msgs
   tf2_ros
@@ -61,10 +68,22 @@ ament_target_dependencies(dual_arm_servo_commander
   moveit_ros_move_group
   tf2_eigen
   Eigen3
+  sensor_msgs
+  dual_arm_interfaces
 )
+
+add_executable(dual_arm_servo_client src/dual_arm_servo_client.cpp)
+ament_target_dependencies(dual_arm_servo_client
+  rclcpp
+  rclcpp_action
+  dual_arm_interfaces
+  nlohmann_json
+  std_msgs
+)
+
 install(
   TARGETS
-    camera_servo_demo laser_servo_demo dual_arm_servo_commander
+    camera_servo_demo laser_servo_demo dual_arm_servo_server dual_arm_servo_client
   DESTINATION
     lib/${PROJECT_NAME}
 )
