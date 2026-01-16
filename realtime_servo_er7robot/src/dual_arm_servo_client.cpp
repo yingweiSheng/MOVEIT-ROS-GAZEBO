@@ -40,6 +40,8 @@ private:
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr command_sub_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr feedback_to_main_;
+    GoalHandleDualArmLockServo::SharedPtr active_goal_handle_;
+    std::mutex goal_handle_mutex_;
     
     void send_goal(const std_msgs::msg::String& command)
     {
@@ -54,6 +56,14 @@ private:
         std::vector<float> master_vel = data["master_velocity"];
         float execute_t = data["execute_time"];
         float frequency = data["frequency"];
+        // 判断运动还是中途停止
+        bool move = data["move"];
+        
+        if (!move)
+        {
+            this->cancel_current_goal();
+            return;
+        }
 
         auto goal_msg = DualArmLockServo::Goal();
         for (int i=0;i<6;++i)
@@ -84,9 +94,28 @@ private:
     {
         if (!goal_handle) {
             RCLCPP_ERROR(this->get_logger(), "Goal 被服务端拒绝 (REJECTED)");
-        } else {
+        } 
+        else 
+        {
             RCLCPP_INFO(this->get_logger(), "Goal 被服务端接受 (ACCEPTED)，开始执行...");
+            std::lock_guard<std::mutex> lock(goal_handle_mutex_);
+            this->active_goal_handle_ = goal_handle;
         }
+    }
+    void cancel_current_goal()
+    {
+        std::lock_guard<std::mutex> lock(goal_handle_mutex_);
+        
+        if (!active_goal_handle_) {
+            RCLCPP_WARN(this->get_logger(), "收到取消指令，但当前没有活动的任务句柄。");
+            return;
+        }
+
+        RCLCPP_INFO(this->get_logger(), "正在发送取消请求给服务端...");
+        auto future_cancel = this->client_ptr_->async_cancel_goal(active_goal_handle_);
+        
+        // 设置回调以确认服务端是否收到了取消请求
+        // 注意：最终的 CANCELED 状态会在 result_callback 中返回
     }
 
     // --- 2. 收到执行过程中的反馈 ---
@@ -104,19 +133,19 @@ private:
 
         switch (result.code) {
             case rclcpp_action::ResultCode::SUCCEEDED:
-                RCLCPP_INFO(this->get_logger(), "任务成功 (SUCCEEDED)");
+                RCLCPP_INFO(this->get_logger(), "Goal:SUCCEEDED");
                 response_json["status"] = "success";
                 break;
             case rclcpp_action::ResultCode::ABORTED:
-                RCLCPP_ERROR(this->get_logger(), "任务被拒绝 (ABORTED)");
+                RCLCPP_ERROR(this->get_logger(), "Goal:ABORTED");
                 response_json["status"] = "aborted";
                 break;
             case rclcpp_action::ResultCode::CANCELED:
-                RCLCPP_WARN(this->get_logger(), "任务中途取消 (CANCELED)");
+                RCLCPP_WARN(this->get_logger(), "Goal:CANCELED");
                 response_json["status"] = "canceled";
                 break;
             default:
-                RCLCPP_ERROR(this->get_logger(), "未知结果代码");
+                RCLCPP_ERROR(this->get_logger(), "unknown result");
                 response_json["status"] = "unknown";
                 break;
         }
@@ -137,6 +166,10 @@ private:
             msg_feedback.data = response_json.dump();
             feedback_to_main_->publish(msg_feedback);
             RCLCPP_INFO(this->get_logger(), "发送给主控的反馈: %s", msg_feedback.data.c_str());
+        }
+        else
+        {
+            RCLCPP_INFO(this->get_logger(),"没有result返回");
         }
 
     }

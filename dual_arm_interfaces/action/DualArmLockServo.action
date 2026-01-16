@@ -2,6 +2,7 @@
 float64[6] master_velocity  # [vx, vy, vz, wx, wy, wz]
 float64 execute_time        # 运行时间 (秒)
 float64 frequency           # 控制频率 (Hz)
+bool move
 ---
 # Part 2: Result 
 bool success
